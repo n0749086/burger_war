@@ -88,6 +88,17 @@ cd ~/catkin_ws
 catkin_make
 ```
 
+### 6. gazeboのupdate
+gazeboバグ回避のため、以下が追加で必要。
+'''
+sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+
+wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+
+sudo apt-get update
+
+sudo apt-get install gazebo7 -y
+'''
 インストールは以上です。
 
 ## サンプルの実行
