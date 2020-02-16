@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export TURTLEBOT3_MODEL=burger
+
 # set judge server state "running"
 bash judge/test_scripts/set_running.sh localhost:5000
 

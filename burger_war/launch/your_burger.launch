@@ -6,8 +6,11 @@
 
 
     <!-- sample program node -->
+    <include file="$(find burger_navigation)/launch/burger_navigation.launch" />
 
-    <node pkg="burger_war" type="testRun.py" name="randomRun" output="screen"/>
+    <node pkg="burger_war" type="testRun.py" name="randomRun" output="screen">
+        <param name="robot_name" value="$(arg side)" />
+    </node>
 
     <!-- END sample program node -->
 
