@@ -21,10 +21,9 @@ from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import json
 
-bVizCam = False
 
 class RandomBot():
-    def __init__(self, bot_name="NoName", showCamData=False):
+    def __init__(self, bot_name="NoName"):
         # bot name 
         self.name = bot_name
         # velocity publisher
@@ -36,8 +35,6 @@ class RandomBot():
         self.img = None
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber('image_raw', Image, self.imageCallback)
-        bVizCam = showCamData
-        rospy.loginfo(bVizCam)
 
         # lidar scan subscriber
         self.scan = LaserScan()
@@ -59,11 +56,6 @@ class RandomBot():
             self.img = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             rospy.logerr(e)
-
-        
-        cv2.imshow("Image window", self.img)
-        cv2.waitKey(1)
-
 
     def calcTwist(self):
         value = random.randint(1,1000)
@@ -90,7 +82,7 @@ class RandomBot():
     def stateCallback(self, state):
         dic = json.loads(state.data)
         #rospy.loginfo(dic)
-        rospy.loginfo(("score", dic["scores"]["r"]))
+        #rospy.loginfo(("score", dic["scores"]["r"]))
 
     def strategy(self):
         r = rospy.Rate(1) # change speed 1fps
@@ -102,7 +94,6 @@ class RandomBot():
 
         while not rospy.is_shutdown():
             twist = self.calcTwist()
-            print(twist)
             self.vel_pub.publish(twist)
 
             r.sleep()
@@ -110,6 +101,6 @@ class RandomBot():
 
 if __name__ == '__main__':
     rospy.init_node('random_run')
-    bot = RandomBot('Random', True)
+    bot = RandomBot('Random')
     bot.strategy()
 
