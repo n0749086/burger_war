@@ -68,12 +68,16 @@ class RandomBot():
 
     def isNearWall(self, scan):
         if not (len(scan) == 360):
-            return False
+            return 0
         forword_scan = scan[:10] + scan[-10:]
         forword_scan = [x for x in forword_scan if x > 0.1]
         if min(forword_scan) < 0.2:
-            return True
-        return False
+            return -1
+        back_scan = scan[175:185]
+        back_scan = [x for x in back_scan if x > 0.1]
+        if min(back_scan) < 0.2:
+            return 1
+        return 0
 
     def randomWalk(self):
         value = random.randint(1,1000)
@@ -95,10 +99,10 @@ class RandomBot():
 
     def calcTwist(self):
         # ぶつかりそうなら、後退
-        if self.isNearWall(self.scan.ranges):
-            print("Hit",)
-            self.lx *= -2 * self.lx
-            self.az = -self.ANGLE
+        val = self.isNearWall(self.scan.ranges)
+        if val != 0:
+            self.lx = val * 2 * self.SPEED
+            self.az = val * self.ANGLE
         else:
             # とりあえず、ランダムウォーク
             self.randomWalk()
