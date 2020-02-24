@@ -40,8 +40,17 @@ class RandomBot():
         self.scan = LaserScan()
         self.lidar_sub = rospy.Subscriber('scan', LaserScan, self.lidarCallback)
 
-    	# war status
-	    self.war_state = rospy.Subscriber("war_state", String, self.stateCallback)
+        # war status
+        self.war_state = rospy.Subscriber("war_state", String, self.stateCallback)
+
+        self.lx = 0
+        self.ly = 0
+        self.lz = 0
+        self.ax = 0
+        self.ay = 0
+        self.az = 0
+        self.SPEED = 0.2
+        self.ANGLE = 1
 
     # lidar scan topic call back sample
     # update lidar scan state
@@ -57,26 +66,52 @@ class RandomBot():
         except CvBridgeError as e:
             rospy.logerr(e)
 
-    def calcTwist(self):
+    def isNearWall(self, scan):
+        if not (len(scan) == 360):
+            return False
+        forword_scan = scan[:10] + scan[-10:]
+        forword_scan = [x for x in forword_scan if x > 0.1]
+        if min(forword_scan) < 0.2:
+            return True
+        return False
+
+    def randomWalk(self):
         value = random.randint(1,1000)
         if value < 250:
-            x = 0.2
-            th = 0
+            self.lx = self.SPEED
+            self.az = 0
         elif value < 500:
-            x = -0.2
-            th = 0
+            self.lx = -self.SPEED
+            self.az = 0
         elif value < 750:
-            x = 0
-            th = 1
+            self.lx = 0
+            self.az = self.ANGLE
         elif value < 1000:
-            x = 0
-            th = -1
+            self.lx = 0
+            self.az = -self.ANGLE
         else:
-            x = 0
-            th = 0
+            self.lx = 0
+            self.az = 0
+
+    def calcTwist(self):
+        # ぶつかりそうなら、後退
+        if self.isNearWall(self.scan.ranges):
+            print("Hit",)
+            self.lx *= -2 * self.lx
+            self.az = -self.ANGLE
+        else:
+            # とりあえず、ランダムウォーク
+            self.randomWalk()
+
         twist = Twist()
-        twist.linear.x = x; twist.linear.y = 0; twist.linear.z = 0
-        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = th
+
+        twist.linear.x = self.lx
+        twist.linear.y = self.ly
+        twist.linear.z = self.lz
+        twist.angular.x = self.ax
+        twist.angular.y = self.ay
+        twist.angular.z = self.az
+
         return twist
 
     def stateCallback(self, state):
@@ -86,11 +121,6 @@ class RandomBot():
 
     def strategy(self):
         r = rospy.Rate(1) # change speed 1fps
-
-        target_speed = 0
-        target_turn = 0
-        control_speed = 0
-        control_turn = 0
 
         while not rospy.is_shutdown():
             twist = self.calcTwist()
