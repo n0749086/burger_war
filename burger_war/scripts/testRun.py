@@ -40,8 +40,8 @@ class RandomBot():
         self.scan = LaserScan()
         self.lidar_sub = rospy.Subscriber('scan', LaserScan, self.lidarCallback)
 
-	# war status
-	self.war_state = rospy.Subscriber("war_state", String, self.stateCallback)
+    	# war status
+	    self.war_state = rospy.Subscriber("war_state", String, self.stateCallback)
 
     # lidar scan topic call back sample
     # update lidar scan state
