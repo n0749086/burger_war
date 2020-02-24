@@ -49,8 +49,8 @@ class RandomBot():
         self.ax = 0
         self.ay = 0
         self.az = 0
-        self.SPEED = 0.2
-        self.ANGLE = 1
+        self.SPEED = 0.3
+        self.ANGLE = 2
 
     # lidar scan topic call back sample
     # update lidar scan state
@@ -81,13 +81,13 @@ class RandomBot():
 
     def randomWalk(self):
         value = random.randint(1,1000)
-        if value < 250:
+        if value < 400:
             self.lx = self.SPEED
             self.az = 0
-        elif value < 500:
+        elif value < 700:
             self.lx = -self.SPEED
             self.az = 0
-        elif value < 750:
+        elif value < 850:
             self.lx = 0
             self.az = self.ANGLE
         elif value < 1000:
