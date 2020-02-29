@@ -67,17 +67,28 @@ class RandomBot():
             rospy.logerr(e)
 
     def isNearWall(self, scan):
+        wall_forword = False
+        wall_back = False
         if not (len(scan) == 360):
-            return 0
+            return ()
         forword_scan = scan[:10] + scan[-10:]
-        forword_scan = [x for x in forword_scan if x > 0.1]
+        forword_scan = [x for x in forword_scan if x >= 0.05]
         if min(forword_scan) < 0.2:
-            return -1
+            wall_forword = True
+
         back_scan = scan[175:185]
-        back_scan = [x for x in back_scan if x > 0.1]
+        back_scan = [x for x in back_scan if x >= 0.05]
         if min(back_scan) < 0.2:
-            return 1
-        return 0
+            wall_back = True
+        if wall_forword and wall_back:
+            return (0, 1)
+        elif wall_forword:
+            return (-2, -1)
+        elif wall_back:
+            return (2, 1)
+        else:
+            return ()
+        
 
     def randomWalk(self):
         value = random.randint(1,1000)
@@ -100,9 +111,9 @@ class RandomBot():
     def calcTwist(self):
         # ぶつかりそうなら、後退
         val = self.isNearWall(self.scan.ranges)
-        if val != 0:
-            self.lx = val * 2 * self.SPEED
-            self.az = val * self.ANGLE
+        if len(val) != 0:
+            self.lx = val[0] * self.SPEED
+            self.az = val[1] * self.ANGLE
         else:
             # とりあえず、ランダムウォーク
             self.randomWalk()
