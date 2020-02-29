@@ -72,16 +72,16 @@ class RandomBot():
         if not (len(scan) == 360):
             return ()
         forword_scan = scan[:10] + scan[-10:]
-        forword_scan = [x for x in forword_scan if x >= 0.05]
+        forword_scan = [x for x in forword_scan if x >= 0.1]
         if min(forword_scan) < 0.2:
             wall_forword = True
 
         back_scan = scan[175:185]
-        back_scan = [x for x in back_scan if x >= 0.05]
+        back_scan = [x for x in back_scan if x >= 0.1]
         if min(back_scan) < 0.2:
             wall_back = True
         if wall_forword and wall_back:
-            return (0, 1)
+            return (0.1, 1)
         elif wall_forword:
             return (-2, -1)
         elif wall_back:
