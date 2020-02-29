@@ -49,8 +49,8 @@ class RandomBot():
         self.ax = 0
         self.ay = 0
         self.az = 0
-        self.SPEED = 0.3
-        self.ANGLE = 2
+        self.SPEED = 0.5
+        self.ANGLE = 3
 
     # lidar scan topic call back sample
     # update lidar scan state
@@ -71,12 +71,12 @@ class RandomBot():
         wall_back = False
         if not (len(scan) == 360):
             return ()
-        forword_scan = scan[:10] + scan[-10:]
+        forword_scan = scan[:15] + scan[-15:]
         forword_scan = [x for x in forword_scan if x >= 0.1]
         if min(forword_scan) < 0.2:
             wall_forword = True
 
-        back_scan = scan[175:185]
+        back_scan = scan[165:185]
         back_scan = [x for x in back_scan if x >= 0.1]
         if min(back_scan) < 0.2:
             wall_back = True
